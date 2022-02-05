@@ -2,10 +2,10 @@ from board import Board
 from minimax import MiniMax
 import os
 import re
-import time
 
 
 def main():
+    """Main program function"""
     # welcome splash
     clearTerminal()
     welcome()
@@ -35,7 +35,7 @@ def main():
                 if board.placeMove(coordinate, currentMove):
                     movesMade += 1
                     break
-        
+
         # update the board view
         clearTerminal()
         print(board)
@@ -57,8 +57,7 @@ def main():
         clearTerminal()
         print(board)
 
-
-
+        # check the board for endstates
         if board.checkWin(coordinate):
             input(f"{nextMove} has won!")
             exit()
@@ -68,6 +67,7 @@ def main():
 
 
 def clearTerminal():
+    """OS independent terminal clearing"""
     if os.name == "nt":
         os.system("cls")
     else:
@@ -75,6 +75,7 @@ def clearTerminal():
 
 
 def welcome():
+    """Waits for confirmation after displaying welcome message"""
     input(
         "Welcome to tictactoe, place three of your tokens in a row to win!\n"
         "You can place a token by entering two numbers separated by a space,"
