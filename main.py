@@ -49,16 +49,13 @@ def main():
             exit()
 
         # play the AI's move
-        t1 = time.perf_counter()
         coordinate = ai.getMove(nextMove, currentMove)
-        t2 = time.perf_counter()
         board.placeMove(coordinate, nextMove)
         movesMade += 1
 
         # update the board view
         clearTerminal()
         print(board)
-        print(t2-t1)
 
 
 
