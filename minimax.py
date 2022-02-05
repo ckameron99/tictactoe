@@ -12,6 +12,7 @@ class MiniMax:
         """Returns the best move for the current move token"""
         self.rootMove = currentMove  # stores the move to optimize
 
+        # get the location of the best move
         val, moveDepth, bestMoveLocation, = self.minimax(
             currentMove,
             nextMove,
@@ -93,6 +94,8 @@ class MiniMax:
                             winMoveDepth = moveDepth
                             bestMoveDepth = moveDepth
                             bestMoveLocation = index
+
+                # root nodes must not be pruned
                 if not rootNode:
                     # prune ineffectual branches
                     if alpha >= beta:
