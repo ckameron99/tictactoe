@@ -27,10 +27,12 @@ def main():
     choice = opponent.getOpponent()
     opponent.setOpponent(choice)
 
+    currentPlayer, nextPlayer = localPlayer, opponent
+
     # main game loop
     while True:
-        coordinate = localPlayer.getMove(currentMove, nextMove)
-
+        # play the current player's move
+        coordinate = currentPlayer.getMove(currentMove, nextMove)
         board.placeMove(coordinate, currentMove)
         movesMade += 1
 
@@ -46,22 +48,9 @@ def main():
             input("Draw!")
             exit()
 
-        # play the AI's move
-        coordinate = opponent.getMove(nextMove, currentMove)
-        board.placeMove(coordinate, nextMove)
-        movesMade += 1
-
-        # update the board view
-        clearTerminal()
-        print(board)
-
-        # check the board for endstates
-        if board.checkWin(coordinate):
-            input(f"{nextMove} has won!")
-            exit()
-        if movesMade == 9:
-            input("Draw!")
-            exit()
+        # change player
+        currentPlayer, nextPlayer = nextPlayer, currentPlayer
+        currentMove, nextMove = nextMove, currentMove
 
 
 def clearTerminal():
