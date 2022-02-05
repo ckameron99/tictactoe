@@ -12,54 +12,19 @@ class MiniMax:
         """Returns the best move for the current move token"""
         self.rootMove = currentMove  # stores the move to optimize
 
-        self.winMoveDepth = inf  # worst case win scenario
-        self.loseMoveDepth = 0  # worst case lose scenario
-
-        # worst cast move value and location
-        bestMoveValue, bestMoveLocation = -inf, None
-
-        # iterates over each move
-        for index, value in np.ndenumerate(self.board.cells):
-            # checks if the move is in an empty space
-            if self.board.cells[index] == "":
-                # place the move
-                self.board.placeMove(index, currentMove)
-
-                # check for the winstate
-                if self.board.checkWin(index):
-                    return index
-
-                # get the expected value of making the move
-                val, moveDepth = self.minimax(
-                    nextMove,
-                    currentMove,
-                    -inf,
-                    inf
-                )
-
-                # restore the board state
-                self.board.delMove(index)
-
-                # if the move is an improvement on the best move so far
-                if val >= bestMoveValue:
-                    if val == -1 or val == 0:  # lose or draw
-                        if moveDepth >= self.loseMoveDepth:
-                            # prefer taking time to lose or draw
-                            bestMoveValue = val
-                            bestMoveLocation = index
-                            self.loseMoveDepth = moveDepth
-                    elif val == 1:  # win
-                        if moveDepth < self.winMoveDepth:
-                            # prefer to win quickly
-                            bestMoveValue = val
-                            bestMoveLocation = index
-                            self.winMoveDepth = moveDepth
+        val, moveDepth, bestMoveLocation, = self.minimax(
+            currentMove,
+            nextMove,
+            -inf,
+            inf,
+            rootNode=True
+        )
         return bestMoveLocation
 
-    def minimax(self, currentMove, nextMove, alpha, beta):
+    def minimax(self, currentMove, nextMove, alpha, beta, rootNode=False):
         """Minimax function, including alpha beta pruning"""
         winMoveDepth = inf  # worst case win scenario
-        loseMoveDepth = -1  # worst case lose scenario
+        loseMoveDepth = 0  # worst case lose scenario
 
         # check a draw state
         emptyCells = 0
@@ -68,17 +33,18 @@ class MiniMax:
                 emptyCells += 1
 
         if emptyCells == 0:
-            return 0, 0
+            return 0, 0, None
 
         # worst case scenario
         bestMoveValue = -inf if currentMove == self.rootMove else inf
+        bestMoveLocation = None
 
         # iterates over each move
         for index, value in np.ndenumerate(self.board.cells):
             # checks if the move is in an empty space
             if value == "":
                 # place the move
-                val, moveDepth = None, None
+                # val, moveDepth = None, None
                 self.board.placeMove(index, currentMove)
 
                 # check for the winstate
@@ -87,9 +53,11 @@ class MiniMax:
 
                     # positive value if AI wins, negative if player wins
                     val = 1 if currentMove == self.rootMove else -1
+                    self.board.delMove(index)
+                    return val, 1, index
                 else:
                     # recurse to get the expected value of making the move
-                    val, moveDepth = self.minimax(
+                    val, moveDepth, null = self.minimax(
                         nextMove,
                         currentMove,
                         alpha,
@@ -117,18 +85,21 @@ class MiniMax:
                             bestMoveValue = val
                             loseMoveDepth = moveDepth
                             bestMoveDepth = moveDepth
+                            bestMoveLocation = index
                     elif val == targetOutcome:  # win
                         if moveDepth <= winMoveDepth:
                             # prefer to win quickly
                             bestMoveValue = val
                             winMoveDepth = moveDepth
                             bestMoveDepth = moveDepth
+                            bestMoveLocation = index
+                if not rootNode:
+                    # prune ineffectual branches
+                    if alpha >= beta:
+                        break
+                    if currentMove == self.rootMove:
+                        alpha = max(alpha, bestMoveValue)
+                    else:
+                        beta = min(beta, bestMoveValue)
 
-                # prune ineffectual branches
-                if currentMove == self.rootMove:
-                    alpha = max(alpha, bestMoveValue)
-                else:
-                    beta = min(beta, bestMoveValue)
-                if alpha >= beta:
-                    break
-        return bestMoveValue, bestMoveDepth + 1
+        return bestMoveValue, bestMoveDepth + 1, bestMoveLocation
