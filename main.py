@@ -1,7 +1,6 @@
 from board import Board
-from minimax import MiniMax
+from multiplayer import Multiplayer, PlayLocal
 import os
-import re
 
 
 def main():
@@ -20,21 +19,20 @@ def main():
     # define the moveset
     currentMove, nextMove = "X", "O"
 
-    # initialize an ai opponent
-    ai = MiniMax(board)
+    # initialize local player
+    localPlayer = PlayLocal(board)
+
+    # initialize an opponent
+    opponent = Multiplayer(board)
+    choice = opponent.getOpponent()
+    opponent.setOpponent(choice)
 
     # main game loop
     while True:
-        while 1:  # wait until valid move input
-            inpt = input("Move: ")
-            if re.match("^[0-2] [0-2]$", inpt):
-                # turn text input to list of ints
-                coordinate = [int(i) for i in inpt.split(" ")]
+        coordinate = localPlayer.getMove(currentMove, nextMove)
 
-                # if the move is in an empty space, make it
-                if board.placeMove(coordinate, currentMove):
-                    movesMade += 1
-                    break
+        board.placeMove(coordinate, currentMove)
+        movesMade += 1
 
         # update the board view
         clearTerminal()
@@ -49,7 +47,7 @@ def main():
             exit()
 
         # play the AI's move
-        coordinate = ai.getMove(nextMove, currentMove)
+        coordinate = opponent.getMove(nextMove, currentMove)
         board.placeMove(coordinate, nextMove)
         movesMade += 1
 
