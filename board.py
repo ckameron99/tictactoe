@@ -76,3 +76,8 @@ class Board:
             return True
 
         return False
+
+    def clear(self):
+        """Clears the board"""
+        for index, value in np.ndenumerate(self.cells):
+            self.delMove(index)

@@ -1,6 +1,7 @@
 from board import Board
 from multiplayer import Multiplayer, PlayLocal
 import os
+import re
 
 
 def main():
@@ -11,10 +12,6 @@ def main():
     # clear splash, initialize the board
     clearTerminal()
     board = Board()
-    movesMade = 0
-
-    # display the board to the user
-    print(board)
 
     # define the moveset
     currentMove, nextMove = "X", "O"
@@ -29,12 +26,33 @@ def main():
 
     currentPlayer, nextPlayer = localPlayer, opponent
 
+    exiting = False
+    while not exiting:
+        # run a game
+        runGame(board, currentPlayer, nextPlayer, currentMove, nextMove)
+        clearTerminal()
+        board.clear()
+
+        # ensure the starting player alternates
+        currentPlayer, nextPlayer = nextPlayer, currentPlayer
+
+        # query if the player wants to start a new game
+        exiting = "a"
+        while not re.match("^(y|n|Y|N)$|^$", exiting):
+            exiting = input("Do you want to play again? [Y/n]:")
+        exiting = exiting.lower() == "n"
+
+
+def runGame(board, currentPlayer, nextPlayer, currentMove, nextMove):
+    # display the board to the user
+    clearTerminal()
+    print(board)
+
     # main game loop
-    while True:
+    for i in range(9):
         # play the current player's move
         coordinate = currentPlayer.getMove(currentMove, nextMove)
         board.placeMove(coordinate, currentMove)
-        movesMade += 1
 
         # update the board view
         clearTerminal()
@@ -44,13 +62,11 @@ def main():
         if board.checkWin(coordinate):
             input(f"{currentMove} has won!")
             exit()
-        if movesMade == 9:
-            input("Draw!")
-            exit()
 
         # change player
         currentPlayer, nextPlayer = nextPlayer, currentPlayer
         currentMove, nextMove = nextMove, currentMove
+    input("Draw!")
 
 
 def clearTerminal():
