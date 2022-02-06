@@ -6,6 +6,7 @@ class Board:
     def __init__(self):
         """Initialize class with blank board"""
         self.cells = np.zeros([3, 3], dtype="U3")
+        self.lastMove = None
 
     def placeMove(self, coordinate, value):
         """Place a move with a token of value at the coordinate given"""
@@ -15,6 +16,7 @@ class Board:
         # ensure the move is in an empty space
         if self.cells[coordinate] == "":
             self.cells.itemset(coordinate, f" {value} ")
+            self.lastMove = coordinate
             return True
         return False
 
@@ -38,8 +40,11 @@ class Board:
                                     for value in np.nditer(self.cells)
                                     ])
 
-    def checkWin(self, coordinate):
+    def checkWin(self, coordinate=None):
         """Check for a winstate caused by the given coordinate"""
+        # if the coordinate to check is not given, check the last move
+        coordinate = coordinate or self.lastMove
+
         # ensure the coordinate is a tuple, not a list
         coordinate = tuple(coordinate)
 

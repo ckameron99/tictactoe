@@ -49,7 +49,7 @@ class MiniMax:
                 self.board.placeMove(index, currentMove)
 
                 # check for the winstate
-                if self.board.checkWin(index):
+                if self.board.checkWin():
                     moveDepth = 0
 
                     # positive value if AI wins, negative if player wins

@@ -59,9 +59,9 @@ def runGame(board, currentPlayer, nextPlayer, currentMove, nextMove):
         print(board)
 
         # check the board for endstates
-        if board.checkWin(coordinate):
+        if board.checkWin():
             input(f"{currentMove} has won!")
-            exit()
+            return
 
         # change player
         currentPlayer, nextPlayer = nextPlayer, currentPlayer
